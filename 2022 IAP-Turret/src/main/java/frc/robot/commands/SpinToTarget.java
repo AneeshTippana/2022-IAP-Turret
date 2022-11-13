@@ -4,38 +4,56 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.PhotonVision;
+//import frc.robot.subsystems.ExampleSubsystem;
+import frc.robot.subsystems.Limelight;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 
+/** An example command that uses an example subsystem. */
 public class SpinToTarget extends CommandBase {
-  public final PhotonVision photon;
-  public final DriveTrain dt;
+  @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
+  //private final ExampleSubsystem m_subsystem;
 
-  /** Creates a new SpinToTarget. */
-  public SpinToTarget(DriveTrain dt, PhotonVision photon) {
+  private final Limelight limeLight;
+  private final DriveTrain driveTrain;
+  
+  /**
+   * Creates a new ExampleCommand.
+   *
+   * @param subsystem The subsystem used by this command.
+   */
+  public SpinToTarget(DriveTrain driveTrain, Limelight limeLight) {
+   // m_subsystem = subsystem;
+    this.driveTrain = driveTrain;
+    this.limeLight = limeLight;
     // Use addRequirements() here to declare subsystem dependencies.
-    this.photon = photon;
-    this.dt = dt;
+   // addRequirements(subsystem);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    dt.tankDrive(-0.2, 0.2);
+    driveTrain.tankDrive(-0.2, 0.2);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return photon.targetExists();
+    return limeLight.get_tv()==1;
   }
 }
+
+
+

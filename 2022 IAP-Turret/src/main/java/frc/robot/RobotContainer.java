@@ -7,9 +7,11 @@ package frc.robot;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.SpinToTarget;
-// import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+//import frc.robot.commands.DistanceAuto;
+//import frc.robot.commands.ExampleCommand;
+//import frc.robot.commands.TimedAuto;
+import frc.robot.subsystems.DriveTrain;
+//import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 /**
@@ -19,35 +21,21 @@ import edu.wpi.first.wpilibj2.command.Command;
  * subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final PhotonVision photon;
-  private final DriveTrain dt;
-
-  public static Joystick joystick1;
-  public static Joystick joystick2;
-
-  private final SpinToTarget spin;
-
   // The robot's subsystems and commands are defined here...
+  //private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
+
+  //private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+  private final static DriveTrain drive = new DriveTrain();
+ // private final static TimedAuto timedAuto = new TimedAuto();
+ // private final static DistanceAuto distanceAuto = new DistanceAuto(1.0);
+  private static Joystick joy1;
+  private static Joystick joy2;
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    photon = new PhotonVision();
-
-    joystick1 = new Joystick(Constants.USBOrder.Zero);
-    joystick2 = new Joystick(Constants.USBOrder.One);
-    dt = new DriveTrain();
-
-    spin = new SpinToTarget(dt, photon);
-
     // Configure the button bindings
+    joy1 = new Joystick(Constants.joy1);
+    joy2 = new Joystick(Constants.joy2);
     configureButtonBindings();
-  }
-
-  public static Joystick getJoy1() {
-    return joystick1;
-  }
-
-  public static Joystick getJoy2() {
-    return joystick2;
   }
 
   /**
@@ -65,6 +53,18 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return spin;
+    return null;
+  }
+  public static Joystick getJoy1(){
+    return joy1;
+  }
+  public static Joystick getJoy2(){
+    return joy2;
+  }
+  public static DriveTrain getDrive(){
+    return drive;
   }
 }
+
+
+
