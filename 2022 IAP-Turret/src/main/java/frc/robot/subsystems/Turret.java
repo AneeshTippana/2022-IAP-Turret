@@ -3,45 +3,62 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot.subsystems;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class DriveTrain extends SubsystemBase {
-  private WPI_TalonSRX left = new WPI_TalonSRX(Constants.leftPort);
-  private WPI_TalonSRX right = new WPI_TalonSRX(Constants.rightPort);
-  private double ticksToMeters = (127.0/10581.0)/100.0;
-  /** Creates a new DriveTrain. */
-  public DriveTrain() {
-    left.configFactoryDefault();
-    right.configFactoryDefault();
+public class Turret extends SubsystemBase {
 
-    left.setInverted(true);
-    right.setInverted(false);
+  private final WPI_TalonSRX motor;
+  /** Creates a new Turret. */
+  public Turret() {
+    motor = new WPI_TalonSRX(Constants.MotorPorts.TurretPort);
+    motor.configFactoryDefault();
+    motor.setInverted(false);
+    motor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 10);
 
-left.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
-right.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative);
+    motor.configForwardLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
+    motor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
+  }
 
+  public void setAngle(double angle) {
+    motor.setSelectedSensorPosition(angle);
   }
-  public void tankDrive(double lPower, double rPower){
-    left.set(ControlMode.PercentOutput, lPower);
-    right.set(ControlMode.PercentOutput, rPower);
+
+  // Resets the position to 0 in ticks
+  // Plural is for 2+ encoders
+  public void resetEncoders() {
+    motor.setSelectedSensorPosition(0);
   }
-  public double getPos(){
-    return((left.getSelectedSensorPosition()+right.getSelectedSensorPosition())/2)*ticksToMeters;
+
+  public double getAngle() {
+    return motor.getSelectedSensorPosition() * 360 / (4096.0);
   }
-  public void resetEncoders(){
-    left.setSelectedSensorPosition(0);
-    right.setSelectedSensorPosition(0);
+
+  public double getCW_Forward_LimitSw() {
+    return motor.isFwdLimitSwitchClosed();
+  } //We have to manually set the limit switches to closed
+
+  public double getCCW_Reverse_LimitSw() {
+    return motor.isRevLimitSwitchClosed();
+  } //We have to manually set the limit switches to closed
+
+  public void spin(double speed){
+    motor.set(ControlMode.PercentOutput, speed);
   }
+
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    tankDrive(RobotContainer.getJoy1().getY(), RobotContainer.getJoy2().getY());
+    SmartDashboard.putNumber("Angle: ", getAngle());
+    // Shows limit switch status on SmartDashboard
+    // We need to adjust our code to align with what SmartDashboard returns
+    SmartDashboard.putNumber("Forward Lim SW:", getCW_Forward_LimitSw());
+    SmartDashboard.putNumber("Reverse Lim SW:", getCCW_Reverse_LimitSw());
   }
 }
