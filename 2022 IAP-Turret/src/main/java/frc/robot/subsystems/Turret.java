@@ -38,16 +38,22 @@ public class Turret extends SubsystemBase {
   }
 
   public double getAngle() {
+    // Multiplies by 360 for the degrees of a single, full revolution and divides 
+    //by 4096.0 because that's the total amount of ticks per revolution
     return motor.getSelectedSensorPosition() * 360 / (4096.0);
   }
 
   public double getCW_Forward_LimitSw() {
+
+    //We have to manually set the limit switches to closed
     return motor.isFwdLimitSwitchClosed();
-  } //We have to manually set the limit switches to closed
+  } 
 
   public double getCCW_Reverse_LimitSw() {
+
+    //We have to manually set the limit switches to closed
     return motor.isRevLimitSwitchClosed();
-  } //We have to manually set the limit switches to closed
+  } 
 
   public void spin(double speed){
     motor.set(ControlMode.PercentOutput, speed);
@@ -56,6 +62,7 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Angle: ", getAngle());
+
     // Shows limit switch status on SmartDashboard
     // We need to adjust our code to align with what SmartDashboard returns
     SmartDashboard.putNumber("Forward Lim SW:", getCW_Forward_LimitSw());
